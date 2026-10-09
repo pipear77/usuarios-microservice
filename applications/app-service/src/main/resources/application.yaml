@@ -1,11 +1,14 @@
 server:
   port: 8081
+  error:
+    include-message: always
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/plaza_usuarios
+    url: jdbc:postgresql://localhost:5433/plaza_usuarios
     username: postgres
     password: postgres
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,3 +16,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+cors:
+  allowed-origins: "*"
