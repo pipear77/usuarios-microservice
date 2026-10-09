@@ -16,6 +16,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
                 type = FilterType.ASSIGNABLE_TYPE,
                 classes = CorsConfig.class
         ))
-@Import(ApiRest.class)
+@Import(UserController.class)
 public class TestConfig {
 }
