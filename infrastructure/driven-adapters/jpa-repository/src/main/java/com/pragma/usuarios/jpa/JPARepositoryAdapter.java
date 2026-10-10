@@ -12,13 +12,11 @@ public class JPARepositoryAdapter extends AdapterOperations<User, UserEntity, Lo
         implements UserRepository {
 
     public JPARepositoryAdapter(JPARepository repository, ObjectMapper mapper) {
-        // El ObjectMapper convierte automáticamente entre User (Dominio) y UserEntity (BD)
-        super(repository, mapper, d -> mapper.map(d, User.class));
+        super(repository, mapper, entity -> mapper.map(entity, User.class));
     }
 
     @Override
     public User saveUser(User user) {
-        // super.save() ya viene incluido en AdapterOperations y hace la conversión por debajo
         return super.save(user);
     }
 
@@ -30,5 +28,11 @@ public class JPARepositoryAdapter extends AdapterOperations<User, UserEntity, Lo
     @Override
     public boolean existsByDocumentId(String documentId) {
         return repository.existsByDocumentId(documentId);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        // super.findById() ya busca en BD y mapea automáticamente a tu objeto de Dominio (User)
+        return super.findById(id);
     }
 }

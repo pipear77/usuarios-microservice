@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = "/api/v1/users")
 @RequiredArgsConstructor
@@ -30,5 +33,21 @@ public class UserController {
 
         userUseCase.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getUserById(@PathVariable("id") Long id) {
+        User user = userUseCase.getUserById(id);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        // Lectura real de la base de datos
+        response.put("role", user.getRole().getName());
+
+        return ResponseEntity.ok(response);
     }
 }

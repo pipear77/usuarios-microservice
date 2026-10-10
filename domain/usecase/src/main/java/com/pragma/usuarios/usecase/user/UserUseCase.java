@@ -1,5 +1,6 @@
 package com.pragma.usuarios.usecase.user;
 
+import com.pragma.usuarios.model.role.Role;
 import com.pragma.usuarios.model.user.User;
 import com.pragma.usuarios.model.user.gateways.PasswordEncoderPort;
 import com.pragma.usuarios.model.user.gateways.UserRepository;
@@ -22,6 +23,11 @@ public class UserUseCase {
         }
 
         user.setPassword(passwordEncoderPort.encode(user.getPassword()));
+
+        // Asignamos el rol real antes de persistir en BD
+        Role ownerRole = Role.builder().id(2L).name("PROPIETARIO").build();
+        user.setRole(ownerRole);
+
         return userRepository.saveUser(user);
     }
 
@@ -38,5 +44,9 @@ public class UserUseCase {
         if (!user.isAdult()) {
             throw new IllegalArgumentException("El usuario debe ser mayor de edad.");
         }
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.getUserById(id);
     }
 }
