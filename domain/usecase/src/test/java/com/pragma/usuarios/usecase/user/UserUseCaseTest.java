@@ -67,4 +67,65 @@ class UserUseCaseTest {
         });
         assertEquals("El usuario debe ser mayor de edad.", exception.getMessage());
     }
+
+    @Test
+    void createUser_EmailAlreadyExists_ThrowsException() {
+        // Arrange
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(true);
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userUseCase.createUser(validUser);
+        });
+        assertEquals("El correo ya se encuentra registrado.", exception.getMessage());
+    }
+
+    @Test
+    void createUser_DocumentAlreadyExists_ThrowsException() {
+        // Arrange
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(false);
+        when(userRepository.existsByDocumentId(validUser.getDocumentId())).thenReturn(true);
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userUseCase.createUser(validUser);
+        });
+        assertEquals("El documento de identidad ya se encuentra registrado.", exception.getMessage());
+    }
+
+    @Test
+    void createUser_InvalidEmail_ThrowsException() {
+        // Arrange
+        validUser.setEmail("correo-invalido"); // Sin @
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userUseCase.createUser(validUser);
+        });
+        assertEquals("El formato del correo es inválido.", exception.getMessage());
+    }
+
+    @Test
+    void createUser_InvalidPhone_ThrowsException() {
+        // Arrange
+        validUser.setPhone("letras"); // Letras en lugar de números
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userUseCase.createUser(validUser);
+        });
+        assertEquals("El celular debe ser numérico, máximo 13 caracteres y puede incluir '+'.", exception.getMessage());
+    }
+
+    @Test
+    void createUser_InvalidDocumentId_ThrowsException() {
+        // Arrange
+        validUser.setDocumentId("1234ABC"); // Letras en el documento
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userUseCase.createUser(validUser);
+        });
+        assertEquals("El documento de identidad debe ser únicamente numérico.", exception.getMessage());
+    }
 }
