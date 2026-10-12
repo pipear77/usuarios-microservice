@@ -8,4 +8,5 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
 public interface JPARepository extends CrudRepository<UserEntity, Long>, QueryByExampleExecutor<UserEntity> {
     boolean existsByEmail(String email);
     boolean existsByDocumentId(String documentId);
+    UserEntity findByEmail(String email);
 }

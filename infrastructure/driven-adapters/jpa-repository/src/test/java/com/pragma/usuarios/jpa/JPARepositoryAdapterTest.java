@@ -9,8 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,5 +51,37 @@ class JPARepositoryAdapterTest {
 
         User result = adapter.saveUser(user);
         assertEquals(user, result);
+    }
+
+    @Test
+    void getUserByEmail_Found_ReturnsMappedUser() {
+        // Arrange
+        com.pragma.usuarios.jpa.entity.UserEntity entity = new com.pragma.usuarios.jpa.entity.UserEntity();
+        entity.setEmail("admin@test.com");
+
+        com.pragma.usuarios.model.user.User domainUser = new com.pragma.usuarios.model.user.User();
+        domainUser.setEmail("admin@test.com");
+
+        when(repository.findByEmail("admin@test.com")).thenReturn(entity);
+        when(mapper.map(entity, com.pragma.usuarios.model.user.User.class)).thenReturn(domainUser);
+
+        // Act
+        com.pragma.usuarios.model.user.User result = adapter.getUserByEmail("admin@test.com");
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("admin@test.com", result.getEmail());
+    }
+
+    @Test
+    void getUserByEmail_NotFound_ReturnsNull() {
+        // Arrange
+        when(repository.findByEmail("notfound@test.com")).thenReturn(null);
+
+        // Act
+        com.pragma.usuarios.model.user.User result = adapter.getUserByEmail("notfound@test.com");
+
+        // Assert
+        assertNull(result);
     }
 }

@@ -35,4 +35,10 @@ public class JPARepositoryAdapter extends AdapterOperations<User, UserEntity, Lo
         // super.findById() ya busca en BD y mapea automáticamente a tu objeto de Dominio (User)
         return super.findById(id);
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        UserEntity entity = repository.findByEmail(email);
+        return entity != null ? mapper.map(entity, User.class) : null;
+    }
 }
