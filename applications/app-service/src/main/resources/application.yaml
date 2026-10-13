@@ -26,3 +26,9 @@ management:
     health:
       probes:
         enabled: true
+springdoc:
+  override-with-generic-response: false
+
+jwt:
+  secret: "una-clave-secreta-muy-larga-y-segura-para-firmar-el-token-123456"
+  expiration: 3600000

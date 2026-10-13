@@ -3,6 +3,7 @@ package com.pragma.usuarios.api;
 import com.pragma.usuarios.api.dto.UserRequestDto;
 import com.pragma.usuarios.model.user.User;
 import com.pragma.usuarios.usecase.user.UserUseCase;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +50,20 @@ public class UserController {
         response.put("role", user.getRole().getName());
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/employee")
+    public ResponseEntity<Void> createEmployee(@Valid @RequestBody UserRequestDto request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setLastName(request.getLastName());
+        user.setDocumentId(request.getDocumentId());
+        user.setPhone(request.getPhone());
+        user.setBirthDate(request.getBirthDate());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+
+        userUseCase.saveEmployee(user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

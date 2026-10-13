@@ -1,5 +1,6 @@
 package com.pragma.usuarios.usecase.user;
 
+import com.pragma.usuarios.model.exception.InvalidCredentialsException;
 import com.pragma.usuarios.model.user.User;
 import com.pragma.usuarios.model.user.gateways.JwtProviderPort;
 import com.pragma.usuarios.model.user.gateways.PasswordEncoderPort;
@@ -17,7 +18,7 @@ public class AuthUseCase {
         User user = userRepository.getUserByEmail(email);
 
         if (user == null || !passwordEncoderPort.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Credenciales inválidas");
+            throw new InvalidCredentialsException();
         }
 
         return jwtProviderPort.generateToken(user);

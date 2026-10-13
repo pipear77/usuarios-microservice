@@ -1,5 +1,6 @@
 package com.pragma.usuarios.usecase.auth;
 
+import com.pragma.usuarios.model.exception.InvalidCredentialsException;
 import com.pragma.usuarios.model.user.User;
 import com.pragma.usuarios.model.user.gateways.JwtProviderPort;
 import com.pragma.usuarios.model.user.gateways.PasswordEncoderPort;
@@ -57,7 +58,7 @@ class AuthUseCaseTest {
     void login_UserNotFound_ThrowsException() {
         when(userRepository.getUserByEmail("notfound@test.com")).thenReturn(null);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidCredentialsException exception = assertThrows(InvalidCredentialsException.class, () -> {
             authUseCase.login("notfound@test.com", "1234");
         });
 
@@ -69,7 +70,7 @@ class AuthUseCaseTest {
         when(userRepository.getUserByEmail("admin@test.com")).thenReturn(user);
         when(passwordEncoderPort.matches("wrong_pass", "hashed_password")).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidCredentialsException exception = assertThrows(InvalidCredentialsException.class, () -> {
             authUseCase.login("admin@test.com", "wrong_pass");
         });
 

@@ -57,4 +57,24 @@ class UserControllerTest {
         ResponseEntity<Map<String, Object>> response = userController.getUserById(1L);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
+
+    @Test
+    void createEmployee_ReturnsCreated() {
+        // Arrange
+        com.pragma.usuarios.api.dto.UserRequestDto request = new com.pragma.usuarios.api.dto.UserRequestDto();
+        request.setName("Carlos");
+        request.setLastName("Gomez");
+        request.setDocumentId("987654321");
+        request.setPhone("+573201234567");
+        request.setBirthDate(java.time.LocalDate.of(1995, 5, 15));
+        request.setEmail("carlos@test.com");
+        request.setPassword("password");
+
+        // Act
+        org.springframework.http.ResponseEntity<Void> response = userController.createEmployee(request);
+
+        // Assert
+        assertEquals(org.springframework.http.HttpStatus.CREATED, response.getStatusCode());
+        verify(userUseCase).saveEmployee(any(com.pragma.usuarios.model.user.User.class));
+    }
 }

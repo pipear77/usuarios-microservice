@@ -1,5 +1,8 @@
 package com.pragma.usuarios.usecase.user;
 
+import com.pragma.usuarios.model.exception.InvalidUserFieldException;
+import com.pragma.usuarios.model.exception.UnderageUserException;
+import com.pragma.usuarios.model.exception.UserAlreadyExistsException;
 import com.pragma.usuarios.model.user.User;
 import com.pragma.usuarios.model.user.gateways.PasswordEncoderPort;
 import com.pragma.usuarios.model.user.gateways.UserRepository;
@@ -53,6 +56,22 @@ class UserUseCaseTest {
 
         // Assert
         assertNotNull(result);
+        assertEquals(2L, result.getRole().getId());
+        verify(userRepository).saveUser(validUser);
+    }
+
+    @Test
+    void saveEmployee_ValidUser_Success() {
+        // Arrange
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(false);
+        when(userRepository.existsByDocumentId(validUser.getDocumentId())).thenReturn(false);
+        when(passwordEncoderPort.encode("secreta")).thenReturn("encriptada");
+
+        // Act
+        userUseCase.saveEmployee(validUser);
+
+        // Assert
+        assertEquals(3L, validUser.getRole().getId());
         verify(userRepository).saveUser(validUser);
     }
 
@@ -62,7 +81,7 @@ class UserUseCaseTest {
         validUser.setBirthDate(LocalDate.now().minusYears(15)); // 15 años
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        UnderageUserException exception = assertThrows(UnderageUserException.class, () -> {
             userUseCase.createUser(validUser);
         });
         assertEquals("El usuario debe ser mayor de edad.", exception.getMessage());
@@ -74,7 +93,7 @@ class UserUseCaseTest {
         when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(true);
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
             userUseCase.createUser(validUser);
         });
         assertEquals("El correo ya se encuentra registrado.", exception.getMessage());
@@ -87,7 +106,7 @@ class UserUseCaseTest {
         when(userRepository.existsByDocumentId(validUser.getDocumentId())).thenReturn(true);
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
             userUseCase.createUser(validUser);
         });
         assertEquals("El documento de identidad ya se encuentra registrado.", exception.getMessage());
@@ -99,7 +118,7 @@ class UserUseCaseTest {
         validUser.setEmail("correo-invalido"); // Sin @
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidUserFieldException exception = assertThrows(InvalidUserFieldException.class, () -> {
             userUseCase.createUser(validUser);
         });
         assertEquals("El formato del correo es inválido.", exception.getMessage());
@@ -111,7 +130,7 @@ class UserUseCaseTest {
         validUser.setPhone("letras"); // Letras en lugar de números
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidUserFieldException exception = assertThrows(InvalidUserFieldException.class, () -> {
             userUseCase.createUser(validUser);
         });
         assertEquals("El celular debe ser numérico, máximo 13 caracteres y puede incluir '+'.", exception.getMessage());
@@ -123,7 +142,7 @@ class UserUseCaseTest {
         validUser.setDocumentId("1234ABC"); // Letras en el documento
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        InvalidUserFieldException exception = assertThrows(InvalidUserFieldException.class, () -> {
             userUseCase.createUser(validUser);
         });
         assertEquals("El documento de identidad debe ser únicamente numérico.", exception.getMessage());

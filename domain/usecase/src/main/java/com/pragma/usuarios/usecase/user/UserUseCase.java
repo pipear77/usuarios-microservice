@@ -1,5 +1,8 @@
 package com.pragma.usuarios.usecase.user;
 
+import com.pragma.usuarios.model.exception.InvalidUserFieldException;
+import com.pragma.usuarios.model.exception.UnderageUserException;
+import com.pragma.usuarios.model.exception.UserAlreadyExistsException;
 import com.pragma.usuarios.model.role.Role;
 import com.pragma.usuarios.model.user.User;
 import com.pragma.usuarios.model.user.gateways.PasswordEncoderPort;
@@ -14,13 +17,7 @@ public class UserUseCase {
 
     public User createUser(User user) {
         validateUserRules(user);
-
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("El correo ya se encuentra registrado.");
-        }
-        if (userRepository.existsByDocumentId(user.getDocumentId())) {
-            throw new IllegalArgumentException("El documento de identidad ya se encuentra registrado.");
-        }
+        validateUserExistence(user);
 
         user.setPassword(passwordEncoderPort.encode(user.getPassword()));
 
@@ -31,22 +28,46 @@ public class UserUseCase {
         return userRepository.saveUser(user);
     }
 
-    private void validateUserRules(User user) {
-        if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            throw new IllegalArgumentException("El formato del correo es inválido.");
-        }
-        if (!user.getPhone().matches("^\\+?\\d{1,12}$")) {
-            throw new IllegalArgumentException("El celular debe ser numérico, máximo 13 caracteres y puede incluir '+'.");
-        }
-        if (!user.getDocumentId().matches("^\\d+$")) {
-            throw new IllegalArgumentException("El documento de identidad debe ser únicamente numérico.");
-        }
-        if (!user.isAdult()) {
-            throw new IllegalArgumentException("El usuario debe ser mayor de edad.");
-        }
+    public void saveEmployee(User user) {
+        validateUserRules(user);
+        validateUserExistence(user);
+
+        // Se fuerza o valida que el rol sea EMPLEADO (ID 3) cumpliendo el criterio 3
+        Role role = new Role();
+        role.setId(3L);
+        user.setRole(role);
+
+        // Encriptación obligatoria con BCrypt
+        user.setPassword(passwordEncoderPort.encode(user.getPassword()));
+
+        userRepository.saveUser(user);
     }
 
     public User getUserById(Long id) {
         return userRepository.getUserById(id);
+    }
+
+    private void validateUserRules(User user) {
+        if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new InvalidUserFieldException("El formato del correo es inválido.");
+        }
+        if (!user.getPhone().matches("^\\+?\\d{1,12}$")) {
+            throw new InvalidUserFieldException("El celular debe ser numérico, máximo 13 caracteres y puede incluir '+'.");
+        }
+        if (!user.getDocumentId().matches("^\\d+$")) {
+            throw new InvalidUserFieldException("El documento de identidad debe ser únicamente numérico.");
+        }
+        if (!user.isAdult()) {
+            throw new UnderageUserException("El usuario debe ser mayor de edad.");
+        }
+    }
+
+    private void validateUserExistence(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistsException("El correo ya se encuentra registrado.");
+        }
+        if (userRepository.existsByDocumentId(user.getDocumentId())) {
+            throw new UserAlreadyExistsException("El documento de identidad ya se encuentra registrado.");
+        }
     }
 }
