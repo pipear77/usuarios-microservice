@@ -66,4 +66,20 @@ public class UserController {
         userUseCase.saveEmployee(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/client")
+    public ResponseEntity<Void> createClient(@Valid @RequestBody UserRequestDto request) {
+        User user = User.builder()
+                .name(request.getName())
+                .lastName(request.getLastName())
+                .documentId(request.getDocumentId())
+                .phone(request.getPhone())
+                .birthDate(request.getBirthDate())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
+
+        userUseCase.createClient(user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

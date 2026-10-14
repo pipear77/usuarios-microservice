@@ -77,4 +77,19 @@ class UserControllerTest {
         assertEquals(org.springframework.http.HttpStatus.CREATED, response.getStatusCode());
         verify(userUseCase).saveEmployee(any(com.pragma.usuarios.model.user.User.class));
     }
+
+    @Test
+    void createClient_ReturnsCreated() {
+        // Arrange
+        com.pragma.usuarios.api.dto.UserRequestDto request = new com.pragma.usuarios.api.dto.UserRequestDto(
+                "Ana", "Lopez", "111222", "+573000000", java.time.LocalDate.of(1998, 1, 1), "ana@test.com", "pass"
+        );
+
+        // Act
+        org.springframework.http.ResponseEntity<Void> response = userController.createClient(request);
+
+        // Assert
+        assertEquals(org.springframework.http.HttpStatus.CREATED, response.getStatusCode());
+        verify(userUseCase).createClient(any(com.pragma.usuarios.model.user.User.class));
+    }
 }

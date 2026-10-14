@@ -147,4 +147,19 @@ class UserUseCaseTest {
         });
         assertEquals("El documento de identidad debe ser únicamente numérico.", exception.getMessage());
     }
+
+    @Test
+    void createClient_ValidUser_Success() {
+        // Arrange
+        when(userRepository.existsByEmail(validUser.getEmail())).thenReturn(false);
+        when(userRepository.existsByDocumentId(validUser.getDocumentId())).thenReturn(false);
+        when(passwordEncoderPort.encode("secreta")).thenReturn("encriptada");
+
+        // Act
+        userUseCase.createClient(validUser);
+
+        // Assert
+        assertEquals(4L, validUser.getRole().getId());
+        verify(userRepository).saveUser(validUser);
+    }
 }

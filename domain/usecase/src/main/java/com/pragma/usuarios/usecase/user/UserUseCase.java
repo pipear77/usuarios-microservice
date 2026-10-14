@@ -70,4 +70,20 @@ public class UserUseCase {
             throw new UserAlreadyExistsException("El documento de identidad ya se encuentra registrado.");
         }
     }
+
+    public void createClient(User user) {
+        validateUserRules(user);
+        validateUserExistence(user);
+
+        // Criterio 3: El usuario quedará con el rol cliente
+        Role clientRole = new Role();
+        clientRole.setId(4L);
+        clientRole.setName("CLIENTE");
+        user.setRole(clientRole);
+
+        // Criterio 1: Clave encriptada con bcrypt[cite: 14]
+        user.setPassword(passwordEncoderPort.encode(user.getPassword()));
+
+        userRepository.saveUser(user);
+    }
 }
