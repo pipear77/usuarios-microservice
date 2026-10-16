@@ -92,6 +92,8 @@ jacocoTestReport {
         classDirectories.setFrom(files(allClasses.collect {
             fileTree(dir: it, exclude: exclusions)
         }))
+        // ¡ESTA ES LA LÍNEA QUE FALTA PARA APLICAR LAS EXCLUSIONES!
+        additionalClassDirs.setFrom(files())
     }
 }
 
@@ -116,6 +118,8 @@ jacocoTestCoverageVerification {
         classDirectories.setFrom(files(allClasses.collect {
             fileTree(dir: it, exclude: exclusions)
         }))
+        // ¡ESTA ES LA LÍNEA QUE FALTA PARA APLICAR LAS EXCLUSIONES!
+        additionalClassDirs.setFrom(files())
     }
 }
 check.dependsOn jacocoTestCoverageVerification
