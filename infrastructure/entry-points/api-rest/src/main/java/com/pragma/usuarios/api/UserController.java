@@ -52,6 +52,9 @@ public class UserController {
         // NUEVA LÍNEA: Exponemos el id del restaurante
         response.put("idRestaurant", user.getIdRestaurant());
 
+        // NUEVA LÍNEA: Exponemos el teléfono para el SMS
+        response.put("phone", user.getPhone());
+
         return ResponseEntity.ok(response);
     }
 
