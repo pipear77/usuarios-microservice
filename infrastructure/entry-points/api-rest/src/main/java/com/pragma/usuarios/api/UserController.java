@@ -49,6 +49,9 @@ public class UserController {
         // Lectura real de la base de datos
         response.put("role", user.getRole().getName());
 
+        // NUEVA LÍNEA: Exponemos el id del restaurante
+        response.put("idRestaurant", user.getIdRestaurant());
+
         return ResponseEntity.ok(response);
     }
 
@@ -62,6 +65,9 @@ public class UserController {
         user.setBirthDate(request.getBirthDate());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
+
+        // NUEVA LÍNEA: Mapeamos el idRestaurante
+        user.setIdRestaurant(request.getIdRestaurant());
 
         userUseCase.saveEmployee(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();

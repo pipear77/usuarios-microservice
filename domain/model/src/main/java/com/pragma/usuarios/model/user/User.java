@@ -26,6 +26,7 @@ public class User {
     private String email;
     private String password;
     private Role role;
+    private Long idRestaurant;
 
     public boolean isAdult() {
         if (this.birthDate == null) return false;

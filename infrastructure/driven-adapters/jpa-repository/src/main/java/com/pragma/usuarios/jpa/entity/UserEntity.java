@@ -27,6 +27,10 @@ public class UserEntity {
     private String email;
     private String password;
 
+    // NUEVA COLUMNA
+    @Column(name = "id_restaurant")
+    private Long idRestaurant;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private RoleEntity role;
