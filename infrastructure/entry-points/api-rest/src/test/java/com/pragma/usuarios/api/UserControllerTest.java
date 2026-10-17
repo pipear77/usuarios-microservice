@@ -31,7 +31,8 @@ class UserControllerTest {
 
     @Test
     void createOwner_ReturnsCreated() {
-        UserRequestDto dto = new UserRequestDto("Juan", "Perez", "123", "300", LocalDate.of(2000, 1, 1), "j@j.com", "pass");
+        // Línea 34
+        UserRequestDto dto = new UserRequestDto("Juan", "Perez", "123", "300", LocalDate.of(2000, 1, 1), "j@j.com", "pass", 1L);
         ResponseEntity<String> response = userController.createOwner(dto);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         verify(userUseCase).createUser(any(User.class));
@@ -82,8 +83,7 @@ class UserControllerTest {
     void createClient_ReturnsCreated() {
         // Arrange
         com.pragma.usuarios.api.dto.UserRequestDto request = new com.pragma.usuarios.api.dto.UserRequestDto(
-                "Ana", "Lopez", "111222", "+573000000", java.time.LocalDate.of(1998, 1, 1), "ana@test.com", "pass"
-        );
+                "Juan", "Perez", "123", "300", LocalDate.of(2000, 1, 1), "j@j.com", "pass", 1L);
 
         // Act
         org.springframework.http.ResponseEntity<Void> response = userController.createClient(request);
