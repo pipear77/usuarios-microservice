@@ -46,14 +46,12 @@ public class UserController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("id", user.getId());
-        // Lectura real de la base de datos
         response.put("role", user.getRole().getName());
-
-        // NUEVA LÍNEA: Exponemos el id del restaurante
         response.put("idRestaurant", user.getIdRestaurant());
-
-        // NUEVA LÍNEA: Exponemos el teléfono para el SMS
         response.put("phone", user.getPhone());
+
+        // ¡NUEVA LÍNEA VITAL PARA TRAZABILIDAD! Exponemos el correo electrónico
+        response.put("email", user.getEmail());
 
         return ResponseEntity.ok(response);
     }
